@@ -30,15 +30,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-
-      - name: Get OIDC Token
-        id: get_token
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const token = await core.getIDToken('sts.amazonaws.com');
-            console.log("OIDC Token:", token);
-
       # Log in to AWS using GitHub's OpenID Connect (OIDC) capabilities.
       # This is the most secure way to authenticate without long-lived access keys.
       # You must configure an IAM role in AWS to trust the GitHub OIDC provider.
@@ -46,7 +37,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@main
         with:
           aws-region: ${{ env.AWS_REGION }}
-          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }} # The IAM Role ARN from GitHub Secrets
+          role-to-assume: "arn:aws:iam::348103269500:role/github-actions-ecr-role-simple-web-app" # The IAM Role ARN from GitHub Secrets
 
       # Log in to the Amazon ECR registry so that Docker can push images.
       # - name: Log in to Amazon ECR
