@@ -37,12 +37,12 @@ jobs:
         uses: aws-actions/configure-aws-credentials@main
         with:
           aws-region: ${{ env.AWS_REGION }}
-          role-to-assume: "arn:aws:iam::348103269500:role/github-test-role" # The IAM Role ARN from GitHub Secrets
+          role-to-assume: "${{ secrets.AWS_IAM_ROLE_ARN }}" # The IAM Role ARN from GitHub Secrets
 
       # Log in to the Amazon ECR registry so that Docker can push images.
-      # - name: Log in to Amazon ECR
-      #   id: login-ecr
-      #   uses: aws-actions/amazon-ecr-login@v2
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
 
       # - name: Build and tag the Docker image
       #   id: build-image
