@@ -34,7 +34,7 @@ jobs:
       # This is the most secure way to authenticate without long-lived access keys.
       # You must configure an IAM role in AWS to trust the GitHub OIDC provider.
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@main
+        uses: aws-actions/configure-aws-credentials
         with:
           aws-region: ${{ env.AWS_REGION }}
           role-to-assume: "arn:aws:iam::348103269500:role/github-actions-ecr-role-simple-web-app" # The IAM Role ARN from GitHub Secrets
