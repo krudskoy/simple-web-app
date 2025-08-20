@@ -1,0 +1,70 @@
+# This workflow automates building a Docker image and pushing it to an Amazon ECR repository.
+# It is triggered on a push to the `main` branch.
+
+name: Build and Push Docker Image to ECR
+
+on:
+  push:
+    branches:
+      - main # This workflow runs when you push to the 'main' branch
+
+# Define environment variables for the workflow
+env:
+  # The AWS region where your ECR repository is located.
+  # Replace 'your-aws-region' with your actual region, e.g., 'us-east-1'.
+  AWS_REGION: eu-west-1
+  # The name of your ECR repository.
+  # Replace 'your-ecr-repo-name' with the name of your repository.
+  ECR_REPOSITORY: simple-web-app
+
+jobs:
+  build-and-push:
+    name: Build, Tag, and Push
+    runs-on: ubuntu-latest # This job runs on the latest Ubuntu image
+
+    permissions:
+      contents: read
+      id-token: write # Required for OpenID Connect (OIDC) authentication
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Log in to AWS using GitHub's OpenID Connect (OIDC) capabilities.
+      # This is the most secure way to authenticate without long-lived access keys.
+      # You must configure an IAM role in AWS to trust the GitHub OIDC provider.
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }} # The IAM Role ARN from GitHub Secrets
+
+      # Log in to the Amazon ECR registry so that Docker can push images.
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/ecr-login@v2
+
+      # - name: Build and tag the Docker image
+      #   id: build-image
+      #   env:
+      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #     IMAGE_TAG: ${{ github.sha }} # Use the commit SHA as the image tag
+      #   run: |
+      #     # The full image URI for ECR.
+      #     IMAGE_URI=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          
+      #     # Build the Docker image from the Dockerfile in the root of the repository.
+      #     # We use the full URI as the tag.
+      #     docker build -t $IMAGE_URI .
+          
+      #     # We also tag the image with 'latest' for easy access.
+      #     docker tag $IMAGE_URI $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+      # - name: Push the Docker image
+      #   env:
+      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #     IMAGE_TAG: ${{ github.sha }}
+      #   run: |
+      #     # Push both the SHA-tagged and the 'latest' tagged images to ECR.
+      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
