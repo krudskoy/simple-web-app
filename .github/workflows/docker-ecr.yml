@@ -17,14 +17,14 @@ env:
   # Replace 'your-ecr-repo-name' with the name of your repository.
   ECR_REPOSITORY: simple-web-app
 
+permissions:
+  contents: read
+  id-token: write # Required for OpenID Connect (OIDC) authentication
+
 jobs:
   build-and-push:
     name: Build, Tag, and Push
     runs-on: ubuntu-latest # This job runs on the latest Ubuntu image
-
-    permissions:
-      contents: read
-      id-token: write # Required for OpenID Connect (OIDC) authentication
 
     steps:
       - name: Checkout repository
