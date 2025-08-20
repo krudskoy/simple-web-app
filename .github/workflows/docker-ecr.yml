@@ -44,27 +44,27 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      # - name: Build and tag the Docker image
-      #   id: build-image
-      #   env:
-      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     IMAGE_TAG: ${{ github.sha }} # Use the commit SHA as the image tag
-      #   run: |
-      #     # The full image URI for ECR.
-      #     IMAGE_URI=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      - name: Build and tag the Docker image
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }} # Use the commit SHA as the image tag
+        run: |
+          # The full image URI for ECR.
+          IMAGE_URI=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           
-      #     # Build the Docker image from the Dockerfile in the root of the repository.
-      #     # We use the full URI as the tag.
-      #     docker build -t $IMAGE_URI .
+          # Build the Docker image from the Dockerfile in the root of the repository.
+          # We use the full URI as the tag.
+          docker build -t $IMAGE_URI .
           
-      #     # We also tag the image with 'latest' for easy access.
-      #     docker tag $IMAGE_URI $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          # We also tag the image with 'latest' for easy access.
+          docker tag $IMAGE_URI $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
-      # - name: Push the Docker image
-      #   env:
-      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     IMAGE_TAG: ${{ github.sha }}
-      #   run: |
-      #     # Push both the SHA-tagged and the 'latest' tagged images to ECR.
-      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+      - name: Push the Docker image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          # Push both the SHA-tagged and the 'latest' tagged images to ECR.
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
