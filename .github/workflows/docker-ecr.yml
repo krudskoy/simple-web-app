@@ -30,6 +30,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+
+      - name: Print OIDC Token Audience
+        run: |
+          curl -H "Authorization: bearer $ACTIONS_ID_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq .
+        env:
+          ACTIONS_ID_TOKEN: ${{ steps.id_token.outputs.id_token }}
+        id: id_token
       # Log in to AWS using GitHub's OpenID Connect (OIDC) capabilities.
       # This is the most secure way to authenticate without long-lived access keys.
       # You must configure an IAM role in AWS to trust the GitHub OIDC provider.
