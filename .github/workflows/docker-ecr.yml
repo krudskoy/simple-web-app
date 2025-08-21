@@ -67,4 +67,4 @@ jobs:
         run: |
           # Push both the SHA-tagged and the 'latest' tagged images to ECR.
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker push --tag $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker push --force $ECR_REGISTRY/$ECR_REPOSITORY:latest
